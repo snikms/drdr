@@ -8,17 +8,15 @@ jobs:
     runs-on: windows-latest
 
     steps:
-    - name: Download OpenVPN
+    - name: Download OpenVPN Connect
       run: |
-        $latestRelease = Invoke-RestMethod -Uri "https://api.github.com/repos/OpenVPN/openvpn/releases/latest"
-        $installerUrl = $latestRelease.assets | Where-Object { $_.name -like "*installer.exe" } | Select-Object -First 1 -ExpandProperty browser_download_url
-        Invoke-WebRequest -Uri $installerUrl -OutFile OpenVPN.exe
+        Invoke-WebRequest -Uri https://openvpn.net/downloads/openvpn-connect-v3-windows.msi -OutFile OpenVPNConnect.msi
 
-    - name: Install OpenVPN
-      run: Start-Process -FilePath .\OpenVPN.exe -ArgumentList '/S' -Wait
+    - name: Install OpenVPN Connect
+      run: Start-Process -FilePath msiexec.exe -ArgumentList '/i', 'OpenVPNConnect.msi', '/quiet', '/norestart' -Wait
 
     - name: Start OpenVPN
-      run: Start-Process -FilePath 'C:\Program Files\OpenVPN\bin\openvpn.exe' -ArgumentList '--config', 'xama.first.ovpn' -Wait
+      run: Start-Process -FilePath 'C:\Program Files\OpenVPN Connect\OpenVPNConnect.exe' -ArgumentList '--config', 'xama.first.ovpn' -Wait
 
     - name: Enable TS
       run: Set-ItemProperty -Path 'HKLM:\System\CurrentControlSet\Control\Terminal Server' -Name "fDenyTSConnections" -Value 0
