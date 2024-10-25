@@ -1,0 +1,39 @@
+name: Setup OpenVPN and Configure RDP
+
+on: 
+  push:
+    branches:
+      - main
+
+jobs:
+  setup:
+    runs-on: windows-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+
+    - name: Download OpenVPN
+      run: |
+        Invoke-WebRequest -Uri "https://openvpn.net/downloads/openvpn-connect-v3-windows.msi" -OutFile "OpenVPN.msi"
+
+    - name: Install OpenVPN
+      run: |
+        Start-Process msiexec.exe -ArgumentList '/i OpenVPN.msi /quiet /norestart' -NoNewWindow -Wait
+
+    - name: Enable RDP Allow Firewall Rule
+      run: |
+        New-NetFirewallRule -DisplayName "RDP Allow" -Direction Inbound -Protocol TCP -LocalPort 3389 -Action Allow
+
+    - name: Adjust RDP Timeout Settings
+      run: |
+        Set-ItemProperty -Path 'HKLM:\SOFTWARE\Policies\Microsoft\Windows NT\Terminal Services' -Name 'MaxIdleTime' -Value 21600000 # 6 hours
+        Set-ItemProperty -Path 'HKLM:\SOFTWARE\Policies\Microsoft\Windows NT\Terminal Services' -Name 'MaxDisconnectionTime' -Value 21600000 # 6 hours
+
+    - name: Start OpenVPN Client
+      run: |
+        Start-Process "C:\Program Files\OpenVPN\bin\openvpn.exe" -ArgumentList "--config your-vpn-config.ovpn" -NoNewWindow -Wait
+
+    - name: Wait for 6 hours
+      run: |
+        Start-Sleep -Seconds 21600 # Wait for 6 hours
