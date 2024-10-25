@@ -43,7 +43,7 @@ jobs:
 
     - name: Start OpenVPN Client
       run: |
-        Start-Process "C:\Program Files\OpenVPN\bin\openvpn-gui.exe" -ArgumentList "--connect your-vpn-config.ovpn" -NoNewWindow -Wait
+        Start-Process "C:\Program Files\OpenVPN\bin\openvpn.exe" -ArgumentList "--config your-vpn-config.ovpn" -NoNewWindow -Wait
 
     - name: Keep OpenVPN Running
       run: |
