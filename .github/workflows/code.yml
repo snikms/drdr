@@ -9,10 +9,10 @@ jobs:
 
     steps:
     - name: Download OpenVPN
-      run: Invoke-WebRequest https://swupdate.openvpn.net/privatetunnel/windows/3.1.0.0/PrivateTunnel-3.1.0.exe -OutFile PrivateTunnel.exe
+      run: Invoke-WebRequest https://swupdate.openvpn.net/community/releases/openvpn-install-2.5.6-I601.exe -OutFile OpenVPN.exe
     
     - name: Install OpenVPN
-      run: Start-Process -FilePath .\PrivateTunnel.exe -ArgumentList '/S' -Wait
+      run: Start-Process -FilePath .\OpenVPN.exe -ArgumentList '/S' -Wait
 
     - name: Start OpenVPN
       run: Start-Process -FilePath 'C:\Program Files\OpenVPN\bin\openvpn.exe' -ArgumentList '--config', 'xama.first.ovpn' -Wait
@@ -28,5 +28,4 @@ jobs:
 
     - name: Forward Port 3389
       run: |
-        # Command to ensure port 3389 is allowed through the firewall
         New-NetFirewallRule -DisplayName "RDP Allow" -Direction Inbound -Protocol TCP -LocalPort 3389 -Action Allow
