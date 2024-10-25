@@ -1,39 +1,35 @@
-name: Setup OpenVPN and Configure RDP
+name: ARIFPAKTIGER2021
 
-on: 
-  push:
-    branches:
-      - main
+on: [push, workflow_dispatch]
 
 jobs:
-  setup:
+  build:
     runs-on: windows-latest
 
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v2
-
-    - name: Download OpenVPN
+    - name: Download OpenVPN Connect
       run: |
-        Invoke-WebRequest -Uri "https://openvpn.net/downloads/openvpn-connect-v3-windows.msi" -OutFile "OpenVPN.msi"
+        Invoke-WebRequest -Uri https://openvpn.net/downloads/openvpn-connect-v3-windows.msi -OutFile OpenVPNConnect.msi
 
-    - name: Install OpenVPN
+    - name: Install OpenVPN Connect
+      run: Start-Process -FilePath msiexec.exe -ArgumentList '/i', 'OpenVPNConnect.msi', '/quiet', '/norestart' -Wait
+
+    - name: Download OpenVPN Configuration
       run: |
-        Start-Process msiexec.exe -ArgumentList '/i OpenVPN.msi /quiet /norestart' -NoNewWindow -Wait
+        Invoke-WebRequest -Uri https://raw.githubusercontent.com/snikms/drdr/main/xama.first.ovpn -OutFile 'xama.first.ovpn'
 
-    - name: Enable RDP Allow Firewall Rule
+    - name: Start OpenVPN
+      run: Start-Process -FilePath 'C:\Program Files\OpenVPN Connect\OpenVPNConnect.exe' -ArgumentList '--config', 'xama.first.ovpn' -Wait
+
+    - name: Enable TS
+      run: Set-ItemProperty -Path 'HKLM:\System\CurrentControlSet\Control\Terminal Server' -Name "fDenyTSConnections" -Value 0
+
+    - run: Enable-NetFirewallRule -DisplayGroup "Remote Desktop"
+
+    - run: Set-ItemProperty -Path 'HKLM:\System\CurrentControlSet\Control\Terminal Server\WinStations\RDP-Tcp' -Name "UserAuthentication" -Value 1
+
+    - run: Set-LocalUser -Name "runneradmin" -Password (ConvertTo-SecureString -AsPlainText "P@ssw0rd!" -Force)
+
+    - name: Forward Port 3389
       run: |
         New-NetFirewallRule -DisplayName "RDP Allow" -Direction Inbound -Protocol TCP -LocalPort 3389 -Action Allow
-
-    - name: Adjust RDP Timeout Settings
-      run: |
-        Set-ItemProperty -Path 'HKLM:\SOFTWARE\Policies\Microsoft\Windows NT\Terminal Services' -Name 'MaxIdleTime' -Value 21600000 # 6 hours
-        Set-ItemProperty -Path 'HKLM:\SOFTWARE\Policies\Microsoft\Windows NT\Terminal Services' -Name 'MaxDisconnectionTime' -Value 21600000 # 6 hours
-
-    - name: Start OpenVPN Client
-      run: |
-        Start-Process "C:\Program Files\OpenVPN\bin\openvpn.exe" -ArgumentList "--config your-vpn-config.ovpn" -NoNewWindow -Wait
-
-    - name: Wait for 6 hours
-      run: |
-        Start-Sleep -Seconds 21600 # Wait for 6 hours
