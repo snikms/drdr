@@ -1,0 +1,32 @@
+name: ARIFPAKTIGER2021
+
+on: [push, workflow_dispatch]
+
+jobs:
+  build:
+
+    runs-on: windows-latest
+
+    steps:
+    - name: Download OpenVPN
+      run: Invoke-WebRequest https://swupdate.openvpn.net/privatetunnel/windows/3.1.0.0/PrivateTunnel-3.1.0.exe -OutFile PrivateTunnel.exe
+    
+    - name: Install OpenVPN
+      run: Start-Process -FilePath .\PrivateTunnel.exe -ArgumentList '/S' -Wait
+
+    - name: Start OpenVPN
+      run: Start-Process -FilePath 'C:\Program Files\OpenVPN\bin\openvpn.exe' -ArgumentList '--config', 'xama.first.ovpn' -Wait
+
+    - name: Enable TS
+      run: Set-ItemProperty -Path 'HKLM:\System\CurrentControlSet\Control\Terminal Server' -Name "fDenyTSConnections" -Value 0
+
+    - run: Enable-NetFirewallRule -DisplayGroup "Remote Desktop"
+
+    - run: Set-ItemProperty -Path 'HKLM:\System\CurrentControlSet\Control\Terminal Server\WinStations\RDP-Tcp' -Name "UserAuthentication" -Value 1
+
+    - run: Set-LocalUser -Name "runneradmin" -Password (ConvertTo-SecureString -AsPlainText "P@ssw0rd!" -Force)
+
+    - name: Forward Port 3389
+      run: |
+        # Command to ensure port 3389 is allowed through the firewall
+        New-NetFirewallRule -DisplayName "RDP Allow" -Direction Inbound -Protocol TCP -LocalPort 3389 -Action Allow
