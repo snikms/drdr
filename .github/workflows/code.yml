@@ -9,8 +9,11 @@ jobs:
 
     steps:
     - name: Download OpenVPN
-      run: Invoke-WebRequest https://swupdate.openvpn.net/community/releases/openvpn-install-2.5.6-I601.exe -OutFile OpenVPN.exe
-    
+      run: |
+        $latestRelease = Invoke-RestMethod -Uri "https://api.github.com/repos/OpenVPN/openvpn/releases/latest"
+        $installerUrl = $latestRelease.assets | Where-Object { $_.name -like "*installer.exe" } | Select-Object -First 1 -ExpandProperty browser_download_url
+        Invoke-WebRequest -Uri $installerUrl -OutFile OpenVPN.exe
+
     - name: Install OpenVPN
       run: Start-Process -FilePath .\OpenVPN.exe -ArgumentList '/S' -Wait
 
