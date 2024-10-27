@@ -1,0 +1,33 @@
+name: ARIFPAKTIGER2021
+
+on: [push, workflow_dispatch]
+
+jobs:
+  build:
+    runs-on: windows-latest
+
+    steps:
+    - name: Download OpenVPN
+      run: Invoke-WebRequest https://openvpn.net/downloads/openvpn-connect-v3-windows.msi -OutFile openvpn.msi
+
+    - name: Install OpenVPN
+      run: Start-Process msiexec.exe -ArgumentList '/i openvpn.msi /quiet' -NoNewWindow -Wait
+
+    - name: Download OpenVPN Configuration
+      run: Invoke-WebRequest https://sharedby.blomp.com/lW1AoA -OutFile C:\ProgramData\OpenVPN\config\xama.first.ovpn
+
+    - name: Enable Remote Desktop
+      run: |
+        Set-ItemProperty -Path 'HKLM:\System\CurrentControlSet\Control\Terminal Server' -Name "fDenyTSConnections" -Value 0
+        Enable-NetFirewallRule -DisplayGroup "Remote Desktop"
+        Set-ItemProperty -Path 'HKLM:\System\CurrentControlSet\Control\Terminal Server\WinStations\RDP-Tcp' -Name "UserAuthentication" -Value 1
+
+    - name: Configure OpenVPN
+      run: |
+        # Start OpenVPN service (you may need to adjust the command if the service name differs)
+        Start-Service OpenVPNService
+        # Optionally add a command to connect to the VPN using the config
+        & 'C:\Program Files\OpenVPN\bin\openvpn.exe' --config C:\ProgramData\OpenVPN\config\xama.first.ovpn --auth-user-pass --daemon
+
+    - name: Set Local User Password
+      run: Set-LocalUser -Name "runneradmin" -Password (ConvertTo-SecureString -AsPlainText "P@ssw0rd!" -Force)
