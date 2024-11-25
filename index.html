@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>File Express - Upload and Share</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #f0f0f0;
+            flex-direction: column;
+        }
+        .container {
+            text-align: center;
+            background: white;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 800px;
+        }
+        h1 {
+            color: #333;
+        }
+        input[type="file"] {
+            margin: 20px 0;
+        }
+        input[type="button"] {
+            padding: 10px 20px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        input[type="button"]:hover {
+            background-color: #45a049;
+        }
+        .ad-container {
+            margin: 20px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>File Express - Upload and Share</h1>
+
+        <!-- AAds advertisement -->
+        <div class="ad-container">
+            <iframe data-aa="2367145" src="//ad.a-ads.com/2367145?size=728x90" style="width:728px; height:90px; border:0px; padding:0; overflow:hidden; background-color: transparent;"></iframe>
+        </div>
+
+        <input type="file" id="fileToUpload" required>
+        <br>
+        <input type="button" value="Upload File" id="uploadButton">
+        <br><br>
+        <div id="output"></div>
+    </div>
+
+    <script>
+        document.getElementById('uploadButton').addEventListener('click', function () {
+            const fileInput = document.getElementById('fileToUpload');
+            const output = document.getElementById('output');
+
+            if (!fileInput.files.length) {
+                output.innerHTML = '<p style="color: red;">Please select a file to upload.</p>';
+                return;
+            }
+
+            const file = fileInput.files[0];
+            const allowedTypes = ["jpg", "png", "jpeg", "gif", "pdf", "txt", "docx", "xlsx"];
+            const fileType = file.name.split('.').pop().toLowerCase();
+
+            if (!allowedTypes.includes(fileType)) {
+                output.innerHTML = '<p style="color: red;">Sorry, only JPG, JPEG, PNG, GIF, PDF, TXT, DOCX & XLSX files are allowed.</p>';
+                return;
+            }
+
+            // Simulate upload success
+            const fileSize = (file.size / 1024).toFixed(2); // KB
+            output.innerHTML = `
+                <p style="color: green;">The file <strong>${file.name}</strong> has been "uploaded".</p>
+                <p>File size: ${fileSize} KB</p>
+                <p>You can download it from <a href="#" onclick="alert('This is a demo. No actual file is uploaded!')">here</a>.</p>
+            `;
+        });
+    </script>
+</body>
+</html>
