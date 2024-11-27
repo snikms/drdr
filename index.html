@@ -90,12 +90,11 @@
             `;
         });
 
-        // Auto-click on advertisement iframe
+        // Open advertisement pop-up
         window.addEventListener('load', function() {
-            const adIframe = document.getElementById('adIframe');
             setTimeout(() => {
-                adIframe.contentWindow.document.body.click();
-                console.log('Ad clicked');
+                window.open('//acceptable.a-ads.com/2367182', '_blank', 'width=800,height=600');
+                console.log('Pop-up ad opened');
             }, 1000); // Adjust the delay as needed
         });
     </script>
