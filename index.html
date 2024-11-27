@@ -52,7 +52,7 @@
 
         <!-- AAds advertisement -->
         <div class="ad-container">
-            <iframe id="adIframe" data-aa='2367182' src='//acceptable.a-ads.com/2367182' style='border:0px; padding:0; width:100%; height:100%; overflow:hidden; background-color: transparent;'></iframe>
+            <iframe data-aa='2367314' src='//acceptable.a-ads.com/2367314' style='border:0px; padding:0; width:100%; height:100%; overflow:hidden; background-color: transparent;'></iframe>
         </div>
 
         <input type="file" id="fileToUpload" required>
@@ -88,22 +88,6 @@
                 <p>File size: ${fileSize} KB</p>
                 <p>You can download it from <a href="#" onclick="alert('This is a demo. No actual file is uploaded!')">here</a>.</p>
             `;
-        });
-
-        // Open advertisement pop-up and simulate a click
-        window.addEventListener('load', function() {
-            setTimeout(() => {
-                const adWindow = window.open('//acceptable.a-ads.com/2367182', '_blank', 'width=800,height=600');
-                if (adWindow) {
-                    setTimeout(() => {
-                        adWindow.focus();
-                        adWindow.document.body.click();
-                        console.log('Ad clicked');
-                    }, 2000); // Adjust the delay as needed
-                } else {
-                    console.log('Popup blocker might be preventing the ad from opening');
-                }
-            }, 1000); // Adjust the delay as needed
         });
     </script>
 </body>
