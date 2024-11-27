@@ -90,11 +90,20 @@
             `;
         });
 
-        // Open advertisement pop-up
+        // Open advertisement pop-up and simulate a click
         window.addEventListener('load', function() {
             setTimeout(() => {
-                window.open('//acceptable.a-ads.com/2367182', '_blank', 'width=800,height=600');
-                console.log('Pop-up ad opened');
+                // Open a new window with the ad URL
+                const adWindow = window.open('//acceptable.a-ads.com/2367182', '_blank', 'width=800,height=600');
+                if (adWindow) {
+                    // Simulate a click inside the new window
+                    setTimeout(() => {
+                        adWindow.document.body.click();
+                        console.log('Ad clicked');
+                    }, 2000); // Adjust the delay as needed
+                } else {
+                    console.log('Popup blocker might be preventing the ad from opening');
+                }
             }, 1000); // Adjust the delay as needed
         });
     </script>
